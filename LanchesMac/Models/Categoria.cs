@@ -6,6 +6,7 @@ namespace LanchesMac.Models
     {
         public int CategoriaId { get; set; }
 
+
         [Required(ErrorMessage ="Informe o nome da categoria")]
         [StringLength(100,ErrorMessage ="O tamanho máximo é {1} caracteres")]
         [Display(Name ="Nome")]
