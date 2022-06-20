@@ -1,4 +1,6 @@
 ﻿using LanchesMac.Context;
+using LanchesMac.Repositories;
+using LanchesMac.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace LanchesMac;
@@ -16,6 +18,11 @@ public class Startup
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+        //COM ESSE REGISTRO, TODA VEZ QUE EU SOLICITAR UMA INSTANCIA REFERENCIANDO A INTERFACE, O CONTAINER NATIVO
+        //DA INJEÇÃO DE DEPENDENCIA VAI CRIAR UMA INSTANCIA DA CLASSE E VAI INJETAR NO CONSTRUTOR AONDE EU ESTIVER SOLICITANDO
+        services.AddTransient<ILancheRepository, LancheRepository>();
+        services.AddTransient<ICategoriaRepository, CategoriaRepository>();
 
         services.AddControllersWithViews();
     }
