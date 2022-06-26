@@ -24,7 +24,17 @@ public class Startup
         services.AddTransient<ILancheRepository, LancheRepository>();
         services.AddTransient<ICategoriaRepository, CategoriaRepository>();
 
+        //usa singleton para utilizar durante todo o tempo de vida da aplicação
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
         services.AddControllersWithViews();
+
+        //REGISTRA OS MIDLEWARE PARA O CARRINHO DE COMPRAS
+        //habilita o uso do cache
+        services.AddMemoryCache();
+        //habilita o uso da session
+        services.AddSession();
+
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +54,7 @@ public class Startup
 
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseSession();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>

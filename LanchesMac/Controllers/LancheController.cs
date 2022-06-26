@@ -1,5 +1,6 @@
 ﻿using LanchesMac.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using LanchesMac.ViewModels;
 
 namespace LanchesMac.Controllers
 {
@@ -25,8 +26,16 @@ namespace LanchesMac.Controllers
 
             TempData["Nome"] = "DoriaLanches";
             */
-            var lanches = _lancheRepository.Lanches;
-            return View(lanches);
+            //var lanches = _lancheRepository.Lanches;
+            //return View(lanches);
+
+            var LancheListViewModel = new LancheListViewModel();
+            LancheListViewModel.Lanches = _lancheRepository.Lanches;
+            LancheListViewModel.CategoriaAtual = "Categorial Atual";
+
+            return View(LancheListViewModel);
+
+
         }
     }
 }
