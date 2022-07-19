@@ -1,4 +1,5 @@
 ﻿using LanchesMac.Context;
+using LanchesMac.Models;
 using LanchesMac.Repositories;
 using LanchesMac.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,10 @@ public class Startup
 
         //usa singleton para utilizar durante todo o tempo de vida da aplicação
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        //adddscoped significa o tempo de vida "a cada request" isso significa que se
+        //dois clientes solicitarem um carrinho ao mesmo tempo, eles obterão instancias do carrinho diferentes,
+        //porque são requests diferentes. AddScoped trabalha a nível de requisição
+        services.AddScoped(sp => CarrinhoCompra.GetCarrinho(sp));
 
         services.AddControllersWithViews();
 
@@ -59,6 +64,18 @@ public class Startup
 
         app.UseEndpoints(endpoints =>
         {
+            //endpoints.MapControllerRoute(
+            //    name: "teste",
+            //    pattern: "testeme",
+            //    defaults: new { controller ="teste", Action="index"}
+            //    );
+                
+            endpoints.MapControllerRoute(
+               name: "categoriaFiltro",
+               pattern: "Lanche/{action}/{categoria?}",
+               defaults: new { controller = "Lanche", Action="List" }
+               );
+
             endpoints.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
