@@ -24,6 +24,7 @@ public class Startup
         //DA INJEÇÃO DE DEPENDENCIA VAI CRIAR UMA INSTANCIA DA CLASSE E VAI INJETAR NO CONSTRUTOR AONDE EU ESTIVER SOLICITANDO
         services.AddTransient<ILancheRepository, LancheRepository>();
         services.AddTransient<ICategoriaRepository, CategoriaRepository>();
+        services.AddTransient<IPedidoRepository, PedidoRepository>();
 
         //usa singleton para utilizar durante todo o tempo de vida da aplicação
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
