@@ -2,6 +2,7 @@
 using LanchesMac.Models;
 using LanchesMac.Repositories;
 using LanchesMac.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace LanchesMac;
@@ -19,6 +20,22 @@ public class Startup
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddIdentity<IdentityUser, IdentityRole>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
+        //Sobreescreve as políticas do Identity ( lembrar de retirar isso em tempo de PRD)
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequiredLength = 3;
+            options.Password.RequireUppercase = false;
+            options.Password.RequiredUniqueChars = 1;
+            options.Password.RequireNonAlphanumeric = false;
+        });
+
 
         //COM ESSE REGISTRO, TODA VEZ QUE EU SOLICITAR UMA INSTANCIA REFERENCIANDO A INTERFACE, O CONTAINER NATIVO
         //DA INJEÇÃO DE DEPENDENCIA VAI CRIAR UMA INSTANCIA DA CLASSE E VAI INJETAR NO CONSTRUTOR AONDE EU ESTIVER SOLICITANDO
@@ -61,6 +78,9 @@ public class Startup
         app.UseStaticFiles();
         app.UseRouting();
         app.UseSession();
+
+        // Autenticação SEMPRE antes da Autorização
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
