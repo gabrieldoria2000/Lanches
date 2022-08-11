@@ -2,6 +2,7 @@
 using LanchesMac.Models;
 using LanchesMac.Repositories;
 using LanchesMac.Repositories.Interfaces;
+using LanchesMac.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,6 +43,7 @@ public class Startup
         services.AddTransient<ILancheRepository, LancheRepository>();
         services.AddTransient<ICategoriaRepository, CategoriaRepository>();
         services.AddTransient<IPedidoRepository, PedidoRepository>();
+        services.AddScoped<IseedUserRoleInitial, seedUserRoleInitial>();
 
         //usa singleton para utilizar durante todo o tempo de vida da aplicação
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -61,7 +63,7 @@ public class Startup
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IseedUserRoleInitial seedUserRoleInitial)
     {
         if (env.IsDevelopment())
         {
@@ -77,6 +79,13 @@ public class Startup
 
         app.UseStaticFiles();
         app.UseRouting();
+
+        //cria os perfis
+        seedUserRoleInitial.SeedRoles();
+        //cria os usuarios e atribui o perfil
+        seedUserRoleInitial.SeedUsers();
+        
+
         app.UseSession();
 
         // Autenticação SEMPRE antes da Autorização
@@ -90,11 +99,17 @@ public class Startup
             //    pattern: "testeme",
             //    defaults: new { controller ="teste", Action="index"}
             //    );
-                
+
+
+            endpoints.MapControllerRoute(
+              name: "areas",
+              pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}"
+            );
+
             endpoints.MapControllerRoute(
                name: "categoriaFiltro",
                pattern: "Lanche/{action}/{categoria?}",
-               defaults: new { controller = "Lanche", Action="List" }
+               defaults: new { controller = "Lanche", Action = "List" }
                );
 
             endpoints.MapControllerRoute(
